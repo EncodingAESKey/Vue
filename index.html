@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+<script src="https://cdn.bootcss.com/vue/2.3.4/vue.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/javascript">
+
+//定义一个全局组件
+//props接受父组件传递过来的参数，父组件使用v-bind:传递过来的参数
+//子组件，子组件向父组件传值：this.$emit向外触发事件，this表示子组件，有个emit的方法
+//触发delete事件，自定义的，向外带个参数，index，然后父组件就开始监听
+//
+	Vue.component("list-item", {
+		template: `<li>{{itemprops}}<span @click="handleDelClick(index)">删除</span></li>`,
+		props: ["itemprops","index"],
+		methods: {
+			handleDelClick: function(index) {
+				this.$emit("delete", index)
+			}
+		}
+	});
+
+//父组件
+	var app = new Vue({
+		el:"#app",
+
+		template: `
+			<div>
+				<input type="text" v-model="message"/>
+				<button @click="handleClick">提交</button>
+				<ul>
+					<list-item v-for="(item, index) in items" :itemprops="item" :index="index" @delete="handleDel"></list-item>
+				</ul>
+			</div>
+		`,
+
+		data: {
+			message:'',
+			items: []
+		},
+
+		methods: {
+			handleClick: function() {
+				this.items.push(this.message);
+				this.message = ""
+			},
+			handleDel: function(index) {
+				this.items.splice(index,1)
+			}
+		}
+
+	})
+</script>
+
+</body>
+</html>
